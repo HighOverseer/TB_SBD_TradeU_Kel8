@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginTop="4dp"
+    android:paddingBottom="16dp">
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/grey_500"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <ImageView
+        android:id="@+id/iv_barang"
+        android:layout_width="85dp"
+        android:layout_height="94dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/barang"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toBottomOf="@id/line"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/MyTextView.Bold"
+        android:text="@string/kaos_hitam"
+        android:layout_marginStart="16dp"
+        app:layout_constraintVertical_bias="0.2"
+        app:layout_constraintStart_toEndOf="@id/iv_barang"
+        app:layout_constraintTop_toTopOf="@id/iv_barang"
+        app:layout_constraintBottom_toBottomOf="@id/iv_barang"/>
+    <TextView
+        android:id="@+id/tv_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/MyTextView.Regular"
+        android:textColor="@color/grey_500"
+        android:text="@string/pasar_baru_padang"
+        android:textSize="12sp"
+        app:drawableStartCompat="@drawable/ic_location"
+        android:drawablePadding="2dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_name"
+        app:layout_constraintStart_toStartOf="@id/tv_name"/>
+
+    <TextView
+        android:id="@+id/tv_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13sp"
+        style="@style/MyTextView.Bold"
+        android:text="@string/rp45_000"
+        app:layout_constraintVertical_bias="0.2"
+        app:layout_constraintStart_toStartOf="@id/tv_location"
+        app:layout_constraintTop_toBottomOf="@id/tv_location"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_buy"
+        android:layout_width="68dp"
+        android:layout_height="28dp"
+        style="@style/MyButtonV2"
+        android:text="@string/buy"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/iv_barang"/>
+
+    <ImageButton
+        android:id="@+id/ib_delete_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_trashcan"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

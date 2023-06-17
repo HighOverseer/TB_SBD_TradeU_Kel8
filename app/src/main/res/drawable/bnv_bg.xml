@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@color/grey_250"/>
+        </shape>
+    </item>
+    <item>
+        <inset android:insetTop="1dp" android:drawable="@color/grey_150"/>
+    </item>
+</layer-list>
