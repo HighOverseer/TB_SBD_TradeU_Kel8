@@ -1,8 +1,10 @@
 package com.example.tradeu.helper
 
-import com.example.tradeu.R
+import android.content.Context
+import com.example.tradeu.*
 import com.example.tradeu.data.entities.*
-import com.example.tradeu.formatToDate
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 object InitialDataSource {
@@ -15,20 +17,23 @@ object InitialDataSource {
     private val listSaldo = listOf(50000, 100000, 200000, 70000, 80000, 90000, 150000, 120000)
     private val listAlamat = listOf("Padang", "Solok", "Pariaman", "Jakarta", "Padang Panjang",  "Aceh", "Medan", "Bandung")
 
-    fun getListUser():List<User>{
+    suspend fun getListUser(context: Context):List<User> = withContext(Dispatchers.Default){
         val listUser = mutableListOf<User>()
         for(i in listIdUser.indices){
-            val newUser = User(
-                listIdUser[i].toLong(),
-                listUsername[i],
-                listPassword[i],
-                listFotoProfil[i],
-                listNama[i],
-                listSaldo[i].toLong(),
-                listAlamat[i])
-            listUser.add(newUser)
+            val imgStringUri = savingDrawableToStorage(context, listFotoProfil[i])
+            if (imgStringUri != null){
+                val newUser = User(
+                    listIdUser[i].toLong(),
+                    listUsername[i],
+                    listPassword[i],
+                    imgStringUri,
+                    listNama[i],
+                    listSaldo[i].toLong(),
+                    listAlamat[i])
+                listUser.add(newUser)
+            }else continue
         }
-        return listUser
+        listUser
     }
 
 //tabelBarang
@@ -46,21 +51,25 @@ object InitialDataSource {
         "koko model semi jas.\nsaku ada 3. atas dan samping kanan kiri.\nmatrial: katun toyobo import.\n\nmenerima seragam dan grosir\n\ndetail ukuran:\nsize: S. lingkara dada 104cm. panjang baju 70cm. panjang lengan 56cm.\nsize: M. lingkar dada 110cm. panjang baju 72cm. panjang lengan 58cm.\nsize: L. lingkar dada 114 cm. panjang baju 74cm. panjang lengan 60cm.\nsize: XL. lingkar dada 122cm. panjang baju 77cm. panjang lengan 62cm\n\nBEDA CAHAYA & PENGATURAN CAHAYA\nmengakibatkan warna sedikit berbeda dengan fisik. harap maklum.\nfoto kami buat mendetail fisik stok 100%..\nsemua pruduk kami dibuat didalam negri. karya anak bangsa. LOKAL & ORIGINAL. KUALITAS. tidak kalah dengan luar negri.. nyaman dipakai karna menggunakan pola yang bagus. dan jahitan rapi\n\nada beragam kualitas & harga berbeda.\ntapi kami berusaha memberi HARGA & KUALITAS YANG BAIK."
     )
 
-    fun getListItems():List<Item>{
+    suspend fun getListItems(context: Context):List<Item> = withContext(Dispatchers.Default){
         val listItems = mutableListOf<Item>()
         for(i in listIdBarang.indices){
-            val newItem = Item(
-                listIdBarang[i].toLong(),
-                listIdPenjual[i].toLong(),
-                listNamaBarang[i],
-                listFotoProduk[i],
-                listHargaBarang[i].toLong(),
-                listStok[i].toShort(),
-                listTglPublish[i],
-                listDecription[i])
-            listItems.add(newItem)
+            val imgStringUri = savingDrawableToStorage(context, listFotoProduk[i])
+            if (imgStringUri != null){
+                val newItem = Item(
+                    listIdBarang[i].toLong(),
+                    listIdPenjual[i].toLong(),
+                    listNamaBarang[i],
+                    imgStringUri,
+                    listHargaBarang[i].toLong(),
+                    listStok[i].toShort(),
+                    listTglPublish[i],
+                    listDecription[i])
+                listItems.add(newItem)
+            }else continue
+
         }
-        return listItems
+        listItems
     }
 
 
@@ -68,9 +77,13 @@ object InitialDataSource {
     private val listNoTranksaksi = listOf(1, 2, 3, 4)
     private val listTglTranksaksi = listOf("2022/08/25".formatToDate()!!,"2023/05/2".formatToDate()!!,"2023/03/11".formatToDate()!!,"2023/05/10".formatToDate()!!)
     private val listIdPembeli = listOf(123, 124, 125, 126)
+    private val listNamaPembeli = listOf("Aliyah", "Fajar", "Alif", "elna")
+    private val listBuyerContct = listOf("+6281111", "+6281112", "+6281113", "+6281114")
+    private val listAlamatPembeli = listOf("Padang", "Solok", "Pariaman", "Jakarta")
     private val listIdBarangDibeli = listOf(12, 13, 14, 15)
     private val listJumlah = listOf(5, 4, 3, 2)
     private val listHarga = listOf(45000, 99000, 150000, 100000)
+    private val listTotal = listOf(46000, 109000, 160000, 110000)
     // val listIdUkuran = listOf(1, 1, 3, 4)
 
     fun getListTransaction():List<Transaction>{
@@ -80,9 +93,13 @@ object InitialDataSource {
                 listNoTranksaksi[i].toLong(),
                 listTglTranksaksi[i],
                 listIdPembeli[i].toLong(),
+                listNamaPembeli[i],
+                listAlamatPembeli[i],
+                listBuyerContct[i],
                 listIdBarangDibeli[i].toLong(),
                 listJumlah[i].toShort(),
                 listHarga[i].toLong(),
+                listTotal[i].toLong(),
                 listIdUkuran[i].toLong()
             )
             listTransaction.add(newTransaction)

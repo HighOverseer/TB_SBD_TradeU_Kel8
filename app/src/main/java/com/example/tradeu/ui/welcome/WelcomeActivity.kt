@@ -2,8 +2,11 @@ package com.example.tradeu.ui.welcome
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.WindowInsets
+import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -19,7 +22,6 @@ import com.example.tradeu.ui.mainpage.MainPageActivity
 class WelcomeActivity : AppCompatActivity() {
     private val Context.dataStore:DataStore<Preferences> by preferencesDataStore("userAuth")
     private lateinit var binding: ActivityWelcomeBinding
-    private lateinit var welcomeViewModel:WelcomeViewModel
 
     companion object{
         const val LOGIN_SUCCESS = 100
@@ -39,11 +41,7 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        welcomeViewModel = obtainViewModel()
-
-        welcomeViewModel.isAlreadyLoggedIn.observe(this){isLoggedIn ->
-            checkLoginStatus(isLoggedIn)
-        }
+        setupView()
 
         binding.btnLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
@@ -51,7 +49,20 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkLoginStatus(isLoggedIn:Boolean){
+
+    private fun setupView() {
+        @Suppress("DEPRECATION")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
+        } else {
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+        }
+        supportActionBar?.hide()
+    }
+ /*   private fun checkLoginStatus(isLoggedIn:Boolean){
         if (isLoggedIn){
             val intent = Intent(this, MainPageActivity::class.java)
             startActivity(intent)
@@ -62,11 +73,5 @@ class WelcomeActivity : AppCompatActivity() {
                 btnSignup.isEnabled = true
             }
         }
-    }
-
-    private fun obtainViewModel():WelcomeViewModel{
-        val app = application as MyApplication
-        val factory = ViewModelFactory.getInstance(app, dataStore)
-        return ViewModelProvider(this, factory)[WelcomeViewModel::class.java]
-    }
+    }*/
 }

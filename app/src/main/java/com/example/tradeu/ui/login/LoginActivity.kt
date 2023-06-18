@@ -12,7 +12,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.tradeu.MyApplication
 import com.example.tradeu.R
 import com.example.tradeu.databinding.ActivityLoginBinding
-import com.example.tradeu.showSnackbar
+import com.example.tradeu.showToast
 import com.example.tradeu.ui.ViewModelFactory
 import com.example.tradeu.ui.mainpage.fragment.ProfileFragment
 import com.example.tradeu.ui.welcome.WelcomeActivity
@@ -53,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
                 pbLogin.isVisible = true
                 btnLogin.isEnabled = false
                 loginViewModel.login(username, password)
-            }else showSnackbar(root, getString(R.string.username_password_empty))
+            }else showToast(this@LoginActivity, getString(R.string.username_password_empty))
         }
     }
 
@@ -65,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }else{
             binding.btnLogin.isEnabled = true
-            showSnackbar(binding.root, getString(R.string.username_password_wrong))
+            showToast(this, getString(R.string.username_password_wrong))
         }
     }
 

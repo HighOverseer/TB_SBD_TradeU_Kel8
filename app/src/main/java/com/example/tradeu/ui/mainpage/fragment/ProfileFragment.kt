@@ -12,14 +12,12 @@ import androidx.core.view.isVisible
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.tradeu.MyApplication
 import com.example.tradeu.R
 import com.example.tradeu.databinding.FragmentProfileBinding
 import com.example.tradeu.loadImage
-import com.example.tradeu.showSnackbar
+import com.example.tradeu.showToast
 import com.example.tradeu.ui.ViewModelFactory
 import com.example.tradeu.ui.login.LoginActivity
 import com.example.tradeu.ui.mainpage.MainPageActivity
@@ -62,6 +60,7 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.userData.observe(viewLifecycleOwner){user ->
             binding.civProfilePhoto.loadImage(requireContext(), user.profilePhoto)
+            binding.tvName.text = user.name
         }
 
         profileViewModel.isLogoutSuccess.observe(viewLifecycleOwner){singleEvent ->
@@ -100,7 +99,7 @@ class ProfileFragment : Fragment() {
                 progressBar.isVisible = false
                 btnLogout.isEnabled = true
                 btnChangeAccount.isEnabled = true
-                showSnackbar(binding.root, getString(R.string.sorry_theres_some_mistake))
+                showToast(requireContext(), getString(R.string.sorry_theres_some_mistake))
             }
         }
     }

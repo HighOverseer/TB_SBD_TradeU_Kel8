@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/btn_v2_radius_10" android:state_enabled="true"/>
+    <item android:drawable="@drawable/btn_v2_radius_not_enabled" android:state_enabled="false"/>
+</selector>

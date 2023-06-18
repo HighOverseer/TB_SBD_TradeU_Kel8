@@ -11,7 +11,7 @@ data class ItemAndFavorite(
     val favorite: Favorite,
     @Relation(
         entity = Item::class,
-        parentColumn = "id_barang",
+        parentColumn = "id_barangg",
         entityColumn = "id_barang")
     val itemAndUser: ItemAndUser,
 )

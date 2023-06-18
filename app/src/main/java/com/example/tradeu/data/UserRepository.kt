@@ -24,6 +24,8 @@ class UserRepository private constructor(
         return userDao.getUserDataById(userId)
     }
 
+
+
     suspend fun getUserId():Long{
         return userAuthManager.getUserId()
     }

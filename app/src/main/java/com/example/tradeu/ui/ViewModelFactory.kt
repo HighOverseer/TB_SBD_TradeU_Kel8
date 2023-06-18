@@ -9,7 +9,11 @@ import com.example.tradeu.ui.login.LoginViewModel
 import com.example.tradeu.ui.mainpage.viewmodels.FavoritesViewModel
 import com.example.tradeu.ui.mainpage.viewmodels.HomeViewModel
 import com.example.tradeu.ui.mainpage.viewmodels.ProfileViewModel
-import com.example.tradeu.ui.welcome.WelcomeViewModel
+import com.example.tradeu.ui.mainpage.viewmodels.UploadViewModel
+import com.example.tradeu.ui.payment.PaymentViewModel
+import com.example.tradeu.ui.productdetail.ProductDetailViewModel
+import com.example.tradeu.ui.splash.SplashViewModel
+import com.example.tradeu.ui.transaction.TransactionSuccessViewModel
 
 class ViewModelFactory private constructor(
     private val application: MyApplication,
@@ -24,10 +28,18 @@ class ViewModelFactory private constructor(
             return ProfileViewModel(application.provideUserRepository(dataStore)) as T
         }else if(modelClass.isAssignableFrom(HomeViewModel::class.java)){
             return HomeViewModel(application.provideUserRepository(dataStore), application.provideItemRepository()) as T
-        }else if(modelClass.isAssignableFrom(WelcomeViewModel::class.java)){
-            return WelcomeViewModel(application.provideUserRepository(dataStore)) as T
         }else if(modelClass.isAssignableFrom(FavoritesViewModel::class.java)){
             return FavoritesViewModel(application.provideUserRepository(dataStore), application.provideItemRepository()) as T
+        }else if(modelClass.isAssignableFrom(UploadViewModel::class.java)){
+            return UploadViewModel(application.provideItemRepository(), application.provideUserRepository(dataStore)) as T
+        }else if(modelClass.isAssignableFrom(SplashViewModel::class.java)){
+            return SplashViewModel(application.provideUserRepository(dataStore)) as T
+        }else if (modelClass.isAssignableFrom(ProductDetailViewModel::class.java)){
+            return ProductDetailViewModel(application.provideUserRepository(dataStore), application.provideItemRepository()) as T
+        }else if(modelClass.isAssignableFrom(PaymentViewModel::class.java)){
+            return PaymentViewModel(application.provideUserRepository(dataStore), application.provideItemRepository(), application.provideTransactionRepository()) as T
+        }else if (modelClass.isAssignableFrom(TransactionSuccessViewModel::class.java)){
+            return TransactionSuccessViewModel(application.provideTransactionRepository()) as T
         }
         return super.create(modelClass)
     }

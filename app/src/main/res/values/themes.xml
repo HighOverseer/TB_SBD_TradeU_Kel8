@@ -16,6 +16,10 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="Theme.TradeU.PaymentAct">
+        <item name="android:activityOpenEnterAnimation">@anim/slide_in_left</item>
+    </style>
+    
     <style name="MyButton.Login" parent="Widget.AppCompat.Button">
         <item name="textAllCaps">false</item>
         <item name="android:background">@drawable/btn_login_signup_bg</item>
@@ -108,7 +112,7 @@
     </style>
 
     <style name="MyButtonV2.rad10">
-        <item name="android:background">@drawable/btn_v2_radius_10</item>
+        <item name="android:background">@drawable/btn_v2_radius_10_selector</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/white</item>
     </style>

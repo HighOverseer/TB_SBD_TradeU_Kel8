@@ -1,7 +1,9 @@
 package com.example.tradeu.ui.mainpage.fragment
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -10,17 +12,18 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat
 import androidx.core.view.isVisible
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.tradeu.*
-import com.example.tradeu.data.entities.Item
 import com.example.tradeu.data.entities.User
-import com.example.tradeu.data.entities.relations.ItemUserAndFavorite
+import com.example.tradeu.data.entities.relations.ItemAndFavoriteStatus
 import com.example.tradeu.databinding.FragmentHomeBinding
 import com.example.tradeu.ui.ViewModelFactory
 import com.example.tradeu.ui.mainpage.domain.HorizontalSpacingItemDecoration
@@ -28,9 +31,8 @@ import com.example.tradeu.ui.mainpage.adapter.ListItemAdapter
 import com.example.tradeu.ui.mainpage.domain.HomeTab
 import com.example.tradeu.ui.mainpage.domain.OnItemClickListener
 import com.example.tradeu.ui.mainpage.viewmodels.HomeViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.tradeu.ui.productdetail.ProductDetailActivity
+import com.example.tradeu.ui.productdetail.ProductDetailViewModel
 
 
 class HomeFragment : Fragment() {
@@ -53,6 +55,7 @@ class HomeFragment : Fragment() {
         init()
         homeViewModel = obtainViewModel()
 
+
         homeViewModel.listItem.observe(viewLifecycleOwner){listItem ->
             setRvAndTab(listItem)
         }
@@ -61,6 +64,11 @@ class HomeFragment : Fragment() {
             setLayout(userData)
         }
 
+        homeViewModel.message.observe(viewLifecycleOwner){singleEventMessage ->
+            singleEventMessage.getContentIfNotHandled()?.let {
+                showToast(requireContext(), it)
+            }
+        }
 
         binding.apply {
             btnAll.setOnClickListener {
@@ -83,6 +91,8 @@ class HomeFragment : Fragment() {
             homeViewModel.setCurrentTab(HomeTab.All)
         }
 
+
+
     }
 
 
@@ -97,81 +107,59 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun setRvAndTab(listItem:List<Any>){
+    private fun setRvAndTab(listItem:List<ItemAndFavoriteStatus>){
         binding.apply {
             if (listItem.isNotEmpty()){
                 progressBar.isVisible = true
                 when(homeViewModel.getCurrentTab()){
                     null -> {
-                        if (listItem[0] is Item){
-                            btnNew.isActivated = false
-                            btnTrending.isActivated = false
-                            btnAll.isActivated = false
-                            val listAllItem = mutableListOf<Item>()
-                            listItem.asSequence().forEach { listAllItem.add(it as Item) }
-                            rvListItem.adapter = getAdapater(listAllItem)
-                            rvListItem.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
-                            progressBar.isVisible = false
-                        }
+                        btnNew.isActivated = false
+                        btnTrending.isActivated = false
+                        btnAll.isActivated = false
                     }
                     HomeTab.All -> {
                         btnNew.isActivated = false
                         btnTrending.isActivated = false
                         btnAll.isActivated = true
-                        if (listItem[0] is Item){
-                            val listAllItem = mutableListOf<Item>()
-                            listItem.asSequence().forEach { listAllItem.add(it as Item) }
-                            rvListItem.adapter = getAdapater(listAllItem)
-                            rvListItem.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
-                            progressBar.isVisible = false
-                        }
                     }
                     HomeTab.New ->{
                         btnTrending.isActivated = false
                         btnAll.isActivated = false
                         btnNew.isActivated = true
-                        if (listItem[0] is Item){
-                            val listNewItems = mutableListOf<Item>()
-                            listItem.asSequence().forEach { listNewItems.add(it as Item) }
-                            rvListItem.adapter = getAdapater(listNewItems)
-                            rvListItem.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
-                            progressBar.isVisible = false
-                        }
                     }
                     HomeTab.TrendingNow ->{
                         btnAll.isActivated = false
                         btnNew.isActivated = false
                         btnTrending.isActivated = true
-                        if (listItem[0] is ItemUserAndFavorite){
-                            lifecycleScope.launch(Dispatchers.Default){
-                                val listTrendingItemsAndFavorite = mutableListOf<ItemUserAndFavorite>()
-                                listItem.asSequence().forEach { listTrendingItemsAndFavorite.add(it as ItemUserAndFavorite) }
-                                val sortedList = listTrendingItemsAndFavorite.asSequence().sortedByDescending { it.listUserCount }
-                                val listItems = mutableListOf<Item>()
-                                sortedList.forEach { listItems.add(it.item) }
-                                withContext(Dispatchers.Main){
-                                    rvListItem.adapter = getAdapater(listItems)
-                                    rvListItem.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
-                                    progressBar.isVisible = false
-                                }
-
-                            }
-                        }
                     }
-
                 }
+                rvListItem.adapter = getAdapater(listItem)
+
+                progressBar.isVisible = false
 
             }else {
-                showSnackbar(binding.root, getString(R.string.item_not_found))
+                rvListItem.adapter = getAdapater(emptyList())
+                homeViewModel.setSingleEventMessage(getString(R.string.item_not_found))
                 homeViewModel.setCurrentTab(HomeTab.All)
             }
         }
     }
 
-    private fun getAdapater(listItem: List<Item>):ListItemAdapter{
-        return ListItemAdapter(listItem, object : OnItemClickListener<Item> {
-            override fun onClick(value: Item) {
-                println(value)
+
+
+    private fun getAdapater(listItem: List<ItemAndFavoriteStatus>):ListItemAdapter{
+        return ListItemAdapter(listItem, object : OnItemClickListener<ItemAndFavoriteStatus> {
+            override fun onClick(value: ItemAndFavoriteStatus, sharedElementTransition:ActivityOptionsCompat) {
+                val intent = Intent(requireActivity(), ProductDetailActivity::class.java).putExtra(ProductDetailActivity.EXTRA_ITEM_ID, value.itemId)
+                startActivity(intent, sharedElementTransition.toBundle())
+            }
+
+            override fun updateFavoriteStatus(itemId: Long, isFavorite: Boolean) {
+                if (isFavorite){
+                    homeViewModel.deleteFavorite(itemId)
+                }else{
+                    homeViewModel.addFavorite(itemId)
+                }
             }
         })
     }
@@ -201,10 +189,13 @@ class HomeFragment : Fragment() {
         binding.apply {
             val divider = HorizontalSpacingItemDecoration(13f.toDp().toInt())
             rvListItem.addItemDecoration(divider)
+            rvListItem.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
             searchView.setOnQueryTextListener(object : OnQueryTextListener{
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    query?.let { homeViewModel.getListItemSearch(it) }
-                    closeKeyboard()
+                    query?.let {
+                        homeViewModel.getListItemSearch(it)
+                        closeKeyboard()
+                    }
                     return true
                 }
 

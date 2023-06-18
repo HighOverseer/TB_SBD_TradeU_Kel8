@@ -11,7 +11,9 @@ import com.example.tradeu.helper.InitialDataSource
 import com.example.tradeu.data.dao.*
 import com.example.tradeu.data.entities.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Database(
     entities = [User::class, Item::class, Transaction::class, Favorite::class, ItemSize::class],
@@ -41,12 +43,13 @@ abstract class TradeUDatabase:RoomDatabase() {
                             super.onCreate(db)
                             INSTANCE?.let{database ->
                                 applicationScope.launch {
-                                    database.getUserDao().insertListUser(InitialDataSource.getListUser())
-                                    database.getItemDao().insertListItems(InitialDataSource.getListItems())
-                                    database.getTransactionDao().insertListTransaction(
-                                        InitialDataSource.getListTransaction())
-                                    database.getFavoriteDao().insertListFavorites(InitialDataSource.getListFavorites())
-                                    database.getItemSizeDao().insertListItemSizes(InitialDataSource.getListItemSizes())
+                                    withContext(Dispatchers.IO){
+                                        database.getUserDao().insertListUser(InitialDataSource.getListUser(context))
+                                        database.getItemDao().insertListItems(InitialDataSource.getListItems(context))
+                                        database.getTransactionDao().insertListTransaction(InitialDataSource.getListTransaction())
+                                        database.getFavoriteDao().insertListFavorites(InitialDataSource.getListFavorites())
+                                        database.getItemSizeDao().insertListItemSizes(InitialDataSource.getListItemSizes())
+                                    }
                                 }
                             }
                         }
