@@ -157,4 +157,12 @@
         <item name="fontFamily">@font/poppins_medium</item>
         <item name="android:textColorHint">@color/black_300</item>
     </style>
+
+    <style name="RegisterEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/et_register_bg</item>
+        <item name="android:textSize">20sp</item>
+        <item name="fontFamily">@font/poppins_medium</item>
+        <item name="android:textColorHint">@color/black_300</item>
+    </style>
+
 </resources>

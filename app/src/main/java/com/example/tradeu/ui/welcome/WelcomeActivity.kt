@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,9 +17,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.tradeu.MyApplication
 import com.example.tradeu.R
 import com.example.tradeu.databinding.ActivityWelcomeBinding
+import com.example.tradeu.showToast
 import com.example.tradeu.ui.ViewModelFactory
 import com.example.tradeu.ui.login.LoginActivity
 import com.example.tradeu.ui.mainpage.MainPageActivity
+import com.example.tradeu.ui.register.RegisterActivity
 
 class WelcomeActivity : AppCompatActivity() {
     private val Context.dataStore:DataStore<Preferences> by preferencesDataStore("userAuth")
@@ -25,6 +29,8 @@ class WelcomeActivity : AppCompatActivity() {
 
     companion object{
         const val LOGIN_SUCCESS = 100
+
+
     }
 
     private val intentCheckAction = registerForActivityResult(
@@ -37,6 +43,15 @@ class WelcomeActivity : AppCompatActivity() {
         }
     }
 
+    private val intentRegister = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ){result ->
+        if (result.resultCode == RegisterActivity.REGISTER_SUCCESS){
+            val intent = Intent(this, LoginActivity::class.java )
+            intentCheckAction.launch(intent)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityWelcomeBinding.inflate(layoutInflater)
@@ -46,6 +61,11 @@ class WelcomeActivity : AppCompatActivity() {
         binding.btnLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             intentCheckAction.launch(intent)
+        }
+
+        binding.btnSignup.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            intentRegister.launch(intent)
         }
     }
 

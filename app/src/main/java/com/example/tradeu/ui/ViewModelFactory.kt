@@ -12,6 +12,7 @@ import com.example.tradeu.ui.mainpage.viewmodels.ProfileViewModel
 import com.example.tradeu.ui.mainpage.viewmodels.UploadViewModel
 import com.example.tradeu.ui.payment.PaymentViewModel
 import com.example.tradeu.ui.productdetail.ProductDetailViewModel
+import com.example.tradeu.ui.register.RegisterViewModel
 import com.example.tradeu.ui.splash.SplashViewModel
 import com.example.tradeu.ui.transaction.TransactionSuccessViewModel
 
@@ -40,6 +41,8 @@ class ViewModelFactory private constructor(
             return PaymentViewModel(application.provideUserRepository(dataStore), application.provideItemRepository(), application.provideTransactionRepository()) as T
         }else if (modelClass.isAssignableFrom(TransactionSuccessViewModel::class.java)){
             return TransactionSuccessViewModel(application.provideTransactionRepository()) as T
+        }else if(modelClass.isAssignableFrom(RegisterViewModel::class.java)){
+            return RegisterViewModel(application.provideUserRepository(dataStore)) as T
         }
         return super.create(modelClass)
     }

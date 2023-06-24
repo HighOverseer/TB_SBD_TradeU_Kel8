@@ -32,6 +32,13 @@ class ProfileViewModel(private val userRepository: UserRepository):ViewModel() {
         }
     }
 
+    suspend fun updateUserProfilePhoto(newImgStringUri:String){
+        userData.value?.userId?.let {
+            userRepository.updateUserProfilePhoto(it, newImgStringUri)
+        }
+
+    }
+
     init {
         getUserId()
     }

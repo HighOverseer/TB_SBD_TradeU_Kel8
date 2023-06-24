@@ -100,7 +100,8 @@ class HomeFragment : Fragment() {
     private fun setLayout(user: User){
         binding.apply {
             civProfilePhoto.loadImage(requireContext(), user.profilePhoto)
-            tvGreeting.text = getString(R.string.greeting, user.name)
+            val firstName = user.name.split(" ")[0]
+            tvGreeting.text = getString(R.string.greeting, firstName)
             tvWalletCount.text = getString(R.string.balance_count, formatBalanceString(user.balance))
 
         }

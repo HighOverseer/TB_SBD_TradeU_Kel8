@@ -75,18 +75,21 @@ fun getCurrentDate(): Date {
 fun CircleImageView.loadImage(context:Context, imageStringUri:String){
     Glide.with(context)
         .load(Uri.parse(imageStringUri))
+        .error(R.drawable.ic_person_foreground)
         .into(this)
 }
 
 fun AppCompatImageView.loadImage(context:Context, imageStringUri:String){
     Glide.with(context)
         .load(Uri.parse(imageStringUri))
+        .error(R.drawable.ic_person_foreground)
         .into(this)
 }
 
 fun AppCompatImageView.loadImage(context:Context, imageId:Int){
     Glide.with(context)
         .load(imageId)
+        .error(R.drawable.ic_person_foreground)
         .into(this)
 }
 
@@ -97,6 +100,18 @@ fun ImageView.loadImage(context:Context, imageStringUri:String){
         .into(this)
 }
 
+
+suspend fun deleteProfilePhoto(context: Context, imgStringUri:String):Boolean = withContext(Dispatchers.IO){
+    try {
+        val imgUri = Uri.parse(imgStringUri)
+        val file = imgUri.path?.let { File(it) }
+        val isDeleted = file?.delete()
+        isDeleted?:false
+    }catch (e:IOException){
+        showToast(context, e.message.toString())
+        false
+    }
+}
 
 
 fun reduceFileImage(file: File): File {

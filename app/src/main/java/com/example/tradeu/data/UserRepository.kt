@@ -2,10 +2,8 @@ package com.example.tradeu.data
 
 import androidx.lifecycle.LiveData
 import com.example.tradeu.data.dao.UserDao
-import com.example.tradeu.data.database.TradeUDatabase
 import com.example.tradeu.data.entities.*
 import com.example.tradeu.data.preference.UserAuthManager
-import java.lang.reflect.ParameterizedType
 
 class UserRepository private constructor(
     private val userDao: UserDao,
@@ -24,7 +22,25 @@ class UserRepository private constructor(
         return userDao.getUserDataById(userId)
     }
 
+    suspend fun register(username:String, password: String, fullname:String, address:String):Boolean{
+        val isUsernameAndPassAvailable = !userDao.isUsernameAndPasswordAlreadyUsed(username, password)
+        return if (isUsernameAndPassAvailable){
+            val newUser = User(
+                username = username,
+                password = password,
+                name = fullname,
+                address = address,
+                balance = 150_000,
+                profilePhoto = ""
+            )
+            userDao.register(newUser)
+            true
+        }else false
+    }
 
+    suspend fun updateUserProfilePhoto(userId:Long, newImgStringUri:String){
+        userDao.updateProfilePhoto(userId, newImgStringUri)
+    }
 
     suspend fun getUserId():Long{
         return userAuthManager.getUserId()

@@ -2,7 +2,6 @@ package com.example.tradeu.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.tradeu.data.entities.Favorite
 import com.example.tradeu.data.entities.User
 
 @Dao
@@ -22,5 +21,15 @@ interface UserDao {
     @Transaction
     @Query("UPDATE User SET saldo = ((SELECT saldo from User WHERE id_user = :userId) - :totalPayment) WHERE id_user = :userId")
     suspend fun updateUserWallet(userId:Long, totalPayment:Long)
+    @Query("SELECT EXISTS (SELECT * FROM User Where username = :username AND password = :password)")
+    suspend fun isUsernameAndPasswordAlreadyUsed(username:String, password: String):Boolean
+
+    @Insert
+    suspend fun register(user: User):Long
+
+    @Query("UPDATE User SET foto_profil = :newImgUriString WHERE id_user = :userId")
+    suspend fun updateProfilePhoto(userId:Long, newImgUriString:String)
+
+
 
 }

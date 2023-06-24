@@ -3,6 +3,8 @@ package com.example.tradeu.ui.login
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -26,6 +28,10 @@ class LoginActivity : AppCompatActivity() {
         ViewModelFactory.getInstance((application as MyApplication), dataStore)
     }
 
+    companion object{
+        private const val DELAY_MILLIS = 1000L
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -41,6 +47,10 @@ class LoginActivity : AppCompatActivity() {
 
         loginViewModel.getListUsers().observe(this){
             it.forEach(::println)
+        }
+
+        binding.ibBack.setOnClickListener {
+            onBackPressed()
         }
 
     }
@@ -61,8 +71,13 @@ class LoginActivity : AppCompatActivity() {
         closeKeyboard()
         binding.pbLogin.isVisible = false
         if (isSuccess){
-            setResult(WelcomeActivity.LOGIN_SUCCESS or ProfileFragment.CHANGE_ACCOUNT_SUCCESS)
-            finish()
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({
+                showToast(this, getString(R.string.login_success))
+                setResult(WelcomeActivity.LOGIN_SUCCESS or ProfileFragment.CHANGE_ACCOUNT_SUCCESS)
+                finish()
+            }, DELAY_MILLIS)
+
         }else{
             binding.btnLogin.isEnabled = true
             showToast(this, getString(R.string.username_password_wrong))

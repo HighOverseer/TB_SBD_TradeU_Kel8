@@ -95,6 +95,13 @@
     <string name="balance">Balance</string>
     <string name="rp100_000">Rp100.000</string>
     <string name="ex_628123">ex: +628123</string>
+    <string name="register">Register To TradeU</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="sign_in">Sign in</string>
+    <string name="regis">Register</string>
+    <string name="fullname">Fullname</string>
+    <string name="not_available">Username and Password is Not Available</string>
+    <string name="login_success">Login Berhasil</string>
 
     <string-array name="intent_photo">
         <item>Galeri</item>
